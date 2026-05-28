@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Hacker Network</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 2px solid var(--primary-neon);
+    }
+
+    .admin-header h1 {
+      margin: 0;
+      color: var(--accent-red);
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .admin-tab {
+      padding: var(--spacing-md) var(--spacing-lg);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.3s ease;
+    }
+
+    .admin-tab:hover {
+      color: var(--primary-neon);
+    }
+
+    .admin-tab.active {
+      color: var(--primary-neon);
+      border-bottom-color: var(--primary-neon);
+    }
+
+    .admin-content {
+      display: none;
+    }
+
+    .admin-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .admin-table thead {
+      background: rgba(0, 255, 65, 0.1);
+      border-bottom: 2px solid var(--primary-neon);
+    }
+
+    .admin-table th {
+      padding: var(--spacing-md) var(--spacing-lg);
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary-neon);
+    }
+
+    .admin-table td {
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .admin-table tbody tr:hover {
+      background: rgba(0, 255, 65, 0.05);
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .admin-btn {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.75rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.3s ease;
+    }
+
+    .admin-btn:hover {
+      border-color: var(--primary-neon);
+      color: var(--primary-neon);
+    }
+
+    .admin-btn-danger {
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .admin-btn-danger:hover {
+      background: rgba(255, 0, 85, 0.1);
+    }
+
+    .credit-form {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      display: none;
+    }
+
+    .credit-form.active {
+      display: block;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: var(--spacing-md);
+      align-items: end;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      margin-bottom: var(--spacing-sm);
+      font-size: 0.85rem;
+    }
+
+    .form-group input {
+      padding: var(--spacing-sm);
+      background: var(--darker-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-neon);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      color: var(--primary-neon);
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--primary-neon);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 2px solid rgba(0, 255, 65, 0.3);
+      border-top: 2px solid var(--primary-neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: var(--spacing-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .warning-banner {
+      background: rgba(255, 0, 85, 0.1);
+      border: 2px solid var(--accent-red);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+      color: var(--accent-red);
+      font-family: var(--font-mono);
+    }
+
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-table {
+        font-size: 0.85rem;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: var(--spacing-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+      </ul>
+      <div class="nav-user">
+        <a href="/" class="btn btn-small">Exit Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Container -->
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>🔐 ADMIN CONTROL PANEL</h1>
+      <button class="btn btn-danger" onclick="logoutAdmin()">Logout</button>
+    </div>
+
+    <div class="warning-banner">
+      ⚠️ This is a restricted area. Unauthorized access is prohibited. All actions are logged.
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="dashboard">Dashboard</button>
+      <button class="admin-tab" data-tab="users">Users</button>
+      <button class="admin-tab" data-tab="posts">Posts</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div class="admin-content active" data-tab="dashboard">
+      <h2>System Overview</h2>
+      <div class="stats-grid" id="dashboardStats">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading stats...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="admin-content" data-tab="users">
+      <h2>User Management</h2>
+      
+      <div class="credit-form" id="creditForm">
+        <h3>Update User Credits</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>User ID</label>
+            <input type="number" id="creditUserId" placeholder="User ID">
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" id="creditAmount" placeholder="Amount (positive or negative)">
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-small" onclick="updateCredits()">Update</button>
+          </div>
+        </div>
+      </div>
+
+      <table class="admin-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Credits</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody">
+          <tr>
+            <td colspan="7" class="loading">
+              <div class="spinner"></div>
+              <p>Loading users...</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Posts Tab -->
+    <div class="admin-content" data-tab="posts">
+      <h2>Post Management</h2>
+      
+      <table class="admin-table" id="postsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Type</th>
+            <th>Likes</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="postsBody">
+          <tr>
+            <td colspan="7" class="loading">
+              <div class="spinner"></div>
+              <p>Loading posts...</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    // Admin authentication - check if user is admin
+    if (!HN.isAuthenticated() || !HN.isAdmin()) {
+      window.location.href = '/';
+    }
+
+    // Tab switching
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Load data for tab
+        if (tabName === 'users') loadUsers();
+        if (tabName === 'posts') loadPosts();
+        if (tabName === 'dashboard') loadDashboard();
+      });
+    });
+
+    // Load dashboard stats
+    async function loadDashboard() {
+      try {
+        // Mock stats - in production, call an API endpoint
+        const stats = {
+          users: 1234,
+          posts: 5678,
+          comments: 12345,
+          likes: 45678,
+        };
+
+        document.getElementById('dashboardStats').innerHTML = `
+          <div class="stat-card">
+            <div class="stat-value">${stats.users}</div>
+            <div class="stat-label">Active Users</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${stats.posts}</div>
+            <div class="stat-label">Total Posts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${stats.comments}</div>
+            <div class="stat-label">Comments</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${stats.likes}</div>
+            <div class="stat-label">Total Likes</div>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      }
+    }
+
+    // Load users
+    async function loadUsers() {
+      try {
+        const result = await HN.getUsers();
+        const users = result.users || [];
+
+        if (users.length === 0) {
+          document.getElementById('usersBody').innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: var(--spacing-xl);">No users found</td>
+            </tr>
+          `;
+          return;
+        }
+
+        document.getElementById('usersBody').innerHTML = users.map(user => `
+          <tr>
+            <td>${user.id}</td>
+            <td>${HN.sanitizeHtml(user.username || 'N/A')}</td>
+            <td>${HN.sanitizeHtml(user.email)}</td>
+            <td><strong>${user.credits}</strong></td>
+            <td>${user.role}</td>
+            <td>${HN.formatDate(user.created_at)}</td>
+            <td>
+              <div class="admin-actions">
+                <button class="admin-btn" onclick="editUserCredits(${user.id})">💰</button>
+                <button class="admin-btn admin-btn-danger" onclick="deleteUserHandler(${user.id})">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersBody').innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--accent-red);">Error: ${error.message}</td>
+          </tr>
+        `;
+      }
+    }
+
+    // Load posts
+    async function loadPosts() {
+      try {
+        const result = await HN.getAllPosts();
+        const posts = result.posts || [];
+
+        if (posts.length === 0) {
+          document.getElementById('postsBody').innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align: center; padding: var(--spacing-xl);">No posts found</td>
+            </tr>
+          `;
+          return;
+        }
+
+        document.getElementById('postsBody').innerHTML = posts.map(post => `
+          <tr>
+            <td>${post.id}</td>
+            <td>${HN.truncateText(HN.sanitizeHtml(post.title), 30)}</td>
+            <td>${HN.sanitizeHtml(post.users?.username || 'Unknown')}</td>
+            <td>${post.type}</td>
+            <td>${post.likes}</td>
+            <td>${HN.formatDate(post.created_at)}</td>
+            <td>
+              <div class="admin-actions">
+                <button class="admin-btn" onclick="viewPost(${post.id})">👁️</button>
+                <button class="admin-btn admin-btn-danger" onclick="deletePostHandler(${post.id})">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        document.getElementById('postsBody').innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--accent-red);">Error: ${error.message}</td>
+          </tr>
+        `;
+      }
+    }
+
+    function editUserCredits(userId) {
+      document.getElementById('creditUserId').value = userId;
+      document.getElementById('creditAmount').value = '';
+      document.getElementById('creditForm').classList.toggle('active');
+    }
+
+    async function updateCredits() {
+      const userId = parseInt(document.getElementById('creditUserId').value);
+      const amount = parseInt(document.getElementById('creditAmount').value);
+
+      if (!userId || !amount) {
+        HN.showNotification('Please fill in all fields', 'error');
+        return;
+      }
+
+      try {
+        await HN.updateUserCredits(userId, amount);
+        HN.showNotification(`Credits updated: ${amount > 0 ? '+' : ''}${amount}`, 'success');
+        document.getElementById('creditForm').classList.remove('active');
+        loadUsers();
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    async function deleteUserHandler(userId) {
+      if (!confirm('Delete this user? This action cannot be undone.')) return;
+
+      try {
+        await HN.deleteUser(userId);
+        HN.showNotification('User deleted', 'success');
+        loadUsers();
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    function viewPost(postId) {
+      window.open(`/post.html?id=${postId}`, '_blank');
+    }
+
+    async function deletePostHandler(postId) {
+      if (!confirm('Delete this post? This action cannot be undone.')) return;
+
+      try {
+        await HN.deletePostAdmin(postId);
+        HN.showNotification('Post deleted', 'success');
+        loadPosts();
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    function logoutAdmin() {
+      HN.logout();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>

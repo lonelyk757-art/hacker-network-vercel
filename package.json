@@ -1,0 +1,20 @@
+{
+  "name": "hacker-network-vercel",
+  "version": "1.0.0",
+  "description": "Dark hacker-themed platform for sharing news, blogs, and images",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.1.2",
+    "bcryptjs": "^2.4.3",
+    "@supabase/supabase-js": "^2.38.4"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

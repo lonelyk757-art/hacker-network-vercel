@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post - Hacker Network</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .post-detail-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .post-detail-header {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .post-detail-title {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .post-detail-meta {
+      display: flex;
+      gap: var(--spacing-lg);
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-author-info {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .author-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--darker-bg);
+    }
+
+    .author-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .author-name {
+      font-weight: 700;
+      color: var(--primary-neon);
+    }
+
+    .author-date {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .post-stats {
+      display: flex;
+      gap: var(--spacing-lg);
+      font-size: 0.9rem;
+    }
+
+    .post-stat {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      color: var(--text-secondary);
+    }
+
+    .post-stat button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .post-stat button:hover {
+      transform: scale(1.2);
+    }
+
+    .post-detail-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .post-detail-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-xl);
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .post-detail-content p {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .comments-section {
+      margin-top: var(--spacing-xl);
+    }
+
+    .comments-title {
+      margin-bottom: var(--spacing-lg);
+      color: var(--secondary-cyan);
+    }
+
+    .comment-form {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .comment-input {
+      width: 100%;
+      padding: var(--spacing-md);
+      background: var(--darker-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 80px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .comment-input:focus {
+      outline: none;
+      border-color: var(--primary-neon);
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+    }
+
+    .comment-actions {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: flex-end;
+    }
+
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .comment-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .comment-author {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .comment-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--darker-bg);
+    }
+
+    .comment-author-name {
+      font-weight: 700;
+      color: var(--primary-neon);
+    }
+
+    .comment-date {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .comment-delete {
+      background: none;
+      border: none;
+      color: var(--accent-red);
+      cursor: pointer;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .comment-delete:hover {
+      color: var(--accent-red);
+      text-decoration: underline;
+    }
+
+    .comment-content {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .empty-comments {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-secondary);
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--primary-neon);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 255, 65, 0.3);
+      border-top: 3px solid var(--primary-neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: var(--spacing-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-state {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--accent-red);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: var(--spacing-lg);
+      color: var(--secondary-cyan);
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: var(--primary-neon);
+    }
+
+    @media (max-width: 768px) {
+      .post-detail-meta {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .post-stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/feed.html">Feed</a></li>
+      </ul>
+      <div class="nav-user" id="navUser">
+        <a href="/login.html" class="btn btn-small">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Post Detail Container -->
+  <div class="post-detail-container">
+    <a href="/feed.html" class="back-link">← Back to Feed</a>
+
+    <div id="postContent">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading post...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    const postId = HN.getQueryParam('id');
+
+    if (!postId) {
+      document.getElementById('postContent').innerHTML = `
+        <div class="error-state">
+          <h3>Post not found</h3>
+          <p>No post ID provided</p>
+          <a href="/feed.html" class="btn" style="margin-top: var(--spacing-lg);">Back to Feed</a>
+        </div>
+      `;
+    }
+
+    // Update navigation
+    function updateNavigation() {
+      const navUser = document.getElementById('navUser');
+      if (HN.isAuthenticated()) {
+        const user = HN.getCurrentUser();
+        const credits = user.credits || 0;
+        navUser.innerHTML = `
+          <div class="user-credits">⭐ ${credits} Credits</div>
+          <a href="/profile.html" class="btn btn-small">Profile</a>
+          <button class="btn btn-small btn-danger" onclick="HN.logout()">Logout</button>
+        `;
+      }
+    }
+
+    // Load post
+    async function loadPost() {
+      try {
+        const post = await HN.getPost(postId);
+
+        const authorInitial = post.users?.username?.[0]?.toUpperCase() || '?';
+        const authorName = post.users?.username || 'Anonymous';
+
+        let html = `
+          <div class="post-detail-header">
+            <h1 class="post-detail-title">${HN.sanitizeHtml(post.title)}</h1>
+            
+            <div class="post-detail-meta">
+              <div class="post-author-info">
+                <div class="author-avatar">${authorInitial}</div>
+                <div class="author-details">
+                  <div class="author-name">${HN.sanitizeHtml(authorName)}</div>
+                  <div class="author-date">${HN.formatDate(post.created_at)}</div>
+                </div>
+              </div>
+              
+              <div class="post-stats">
+                <div class="post-stat">
+                  <button onclick="likePost()" title="Like this post">❤️</button>
+                  <span id="likeCount">${post.likes || 0}</span>
+                </div>
+                <div class="post-stat">
+                  💬 <span>${post.comments?.length || 0}</span>
+                </div>
+                <span class="badge badge-${post.type}">${post.type.toUpperCase()}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (post.image_url) {
+          html += `<img src="${post.image_url}" alt="${HN.sanitizeHtml(post.title)}" class="post-detail-image">`;
+        }
+
+        html += `
+          <div class="post-detail-content">
+            ${HN.sanitizeHtml(post.content).replace(/\n/g, '<br>')}
+          </div>
+
+          <div class="post-tags">
+            ${(post.tags || '').split(',').filter(t => t).map(tag => 
+              `<span class="tag">${HN.sanitizeHtml(tag.trim())}</span>`
+            ).join('')}
+          </div>
+        `;
+
+        document.getElementById('postContent').innerHTML = html;
+
+        // Load comments
+        loadComments(post);
+      } catch (error) {
+        console.error('Error loading post:', error);
+        document.getElementById('postContent').innerHTML = `
+          <div class="error-state">
+            <h3>Error loading post</h3>
+            <p>${error.message}</p>
+            <a href="/feed.html" class="btn" style="margin-top: var(--spacing-lg);">Back to Feed</a>
+          </div>
+        `;
+      }
+    }
+
+    // Load comments
+    async function loadComments(post) {
+      try {
+        const comments = await HN.getComments(postId);
+
+        let commentsHtml = `
+          <div class="comments-section">
+            <h2 class="comments-title">Comments (${comments.length})</h2>
+        `;
+
+        if (HN.isAuthenticated()) {
+          commentsHtml += `
+            <div class="comment-form">
+              <textarea class="comment-input" id="commentInput" placeholder="Share your thoughts..."></textarea>
+              <div class="comment-actions">
+                <button class="btn btn-secondary btn-small" onclick="cancelComment()">Cancel</button>
+                <button class="btn btn-small" onclick="submitComment()">Post Comment</button>
+              </div>
+            </div>
+          `;
+        }
+
+        if (comments.length === 0) {
+          commentsHtml += `
+            <div class="empty-comments">
+              <p>No comments yet. Be the first to comment!</p>
+            </div>
+          `;
+        } else {
+          commentsHtml += `<div class="comments-list">`;
+          
+          comments.forEach(comment => {
+            const authorInitial = comment.users?.username?.[0]?.toUpperCase() || '?';
+            const authorName = comment.users?.username || 'Anonymous';
+            const canDelete = HN.isAuthenticated() && 
+              (HN.getCurrentUser().id === comment.user_id || HN.getCurrentUser().role === 'admin');
+
+            commentsHtml += `
+              <div class="comment-item">
+                <div class="comment-header">
+                  <div class="comment-author">
+                    <div class="comment-avatar">${authorInitial}</div>
+                    <div>
+                      <div class="comment-author-name">${HN.sanitizeHtml(authorName)}</div>
+                      <div class="comment-date">${HN.formatDate(comment.created_at)}</div>
+                    </div>
+                  </div>
+                  ${canDelete ? `
+                    <button class="comment-delete" onclick="deleteCommentHandler(${comment.id})">Delete</button>
+                  ` : ''}
+                </div>
+                <div class="comment-content">${HN.sanitizeHtml(comment.content)}</div>
+              </div>
+            `;
+          });
+
+          commentsHtml += `</div>`;
+        }
+
+        commentsHtml += `</div>`;
+
+        document.getElementById('postContent').innerHTML += commentsHtml;
+      } catch (error) {
+        console.error('Error loading comments:', error);
+      }
+    }
+
+    // Like post
+    async function likePost() {
+      if (!HN.isAuthenticated()) {
+        HN.showNotification('Please login to like posts', 'info');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      try {
+        const result = await HN.likePost(postId);
+        document.getElementById('likeCount').textContent = result.post.likes;
+        HN.showNotification('Post liked!', 'success');
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    // Submit comment
+    async function submitComment() {
+      if (!HN.isAuthenticated()) {
+        HN.showNotification('Please login to comment', 'info');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      const content = document.getElementById('commentInput').value.trim();
+      if (!content) {
+        HN.showNotification('Comment cannot be empty', 'error');
+        return;
+      }
+
+      try {
+        await HN.addComment(postId, content);
+        HN.showNotification('Comment posted!', 'success');
+        // Reload comments
+        const post = await HN.getPost(postId);
+        loadComments(post);
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    // Delete comment
+    async function deleteCommentHandler(commentId) {
+      if (!confirm('Delete this comment?')) return;
+
+      try {
+        await HN.deleteComment(postId, commentId);
+        HN.showNotification('Comment deleted', 'success');
+        // Reload comments
+        const post = await HN.getPost(postId);
+        loadComments(post);
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    function cancelComment() {
+      document.getElementById('commentInput').value = '';
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      if (postId) {
+        loadPost();
+      }
+    });
+  </script>
+</body>
+</html>

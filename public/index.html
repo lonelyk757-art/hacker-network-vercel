@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hacker Network - Share News, Blogs & Images</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 217, 255, 0.05) 100%);
+      border-bottom: 2px solid var(--primary-neon);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+      animation: float 8s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(20px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: var(--spacing-lg);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: var(--spacing-2xl);
+      color: var(--text-secondary);
+      animation: fadeIn 0.8s ease-out 0.2s both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-lg);
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeIn 0.8s ease-out 0.4s both;
+    }
+
+    .features {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      background: var(--dark-bg);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary-neon);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-md);
+      display: inline-block;
+    }
+
+    .feature-card h3 {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .cta-section {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 217, 255, 0.05) 100%);
+      border-top: 2px solid var(--primary-neon);
+      border-bottom: 2px solid var(--primary-neon);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .stats {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      background: var(--dark-bg);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: var(--spacing-lg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      background: var(--card-bg);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      color: var(--primary-neon);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    footer {
+      background: var(--card-bg);
+      border-top: 2px solid var(--primary-neon);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--secondary-cyan);
+    }
+
+    footer a:hover {
+      color: var(--primary-neon);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/feed.html">Feed</a></li>
+        <li><a href="/about.html">About</a></li>
+      </ul>
+      <div class="nav-user" id="navUser">
+        <a href="/login.html" class="btn btn-small">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="glitch-text" data-text="HACKER NETWORK">HACKER NETWORK</h1>
+      <p>Share breaking news, in-depth blogs, and powerful images about cybersecurity, exploits, tools, CTF challenges, and privacy.</p>
+      <div class="hero-buttons">
+        <a href="/feed.html" class="btn">Explore Feed</a>
+        <a href="/login.html" class="btn btn-secondary">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 style="text-align: center;">Platform Features</h2>
+      <div class="features-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon">📰</div>
+          <h3>News & Blogs</h3>
+          <p>Share breaking news and in-depth blog posts on cybersecurity and hacking topics.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">🖼️</div>
+          <h3>Image Posts</h3>
+          <p>Upload and share powerful images related to your topics with the community.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">🏷️</div>
+          <h3>Topic Tags</h3>
+          <p>Organize content with tags: Cybersecurity, Exploit, Tools, CTF, Privacy.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">💬</div>
+          <h3>Community</h3>
+          <p>Engage with comments, likes, and upvotes on posts from the community.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">⭐</div>
+          <h3>Credit System</h3>
+          <p>Earn and spend credits to publish content. Start with 300 credits.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">👤</div>
+          <h3>User Profiles</h3>
+          <p>Build your reputation with a profile showcasing your published content.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <h2 style="text-align: center;">Community Stats</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" id="totalUsers">0</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="totalPosts">0</div>
+          <div class="stat-label">Posts Published</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="totalComments">0</div>
+          <div class="stat-label">Community Comments</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="totalLikes">0</div>
+          <div class="stat-label">Total Likes</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to Join the Network?</h2>
+      <p>Start sharing your knowledge and insights with the hacker community today.</p>
+      <a href="/login.html" class="btn" style="margin-top: var(--spacing-lg);">Create Account</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2024 Hacker Network. All rights reserved. | <a href="/privacy.html">Privacy</a> | <a href="/terms.html">Terms</a></p>
+      <p style="margin-top: var(--spacing-md); font-size: 0.8rem;">Built with ⚡ for the security community</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    // Update navigation based on auth state
+    function updateNavigation() {
+      const navUser = document.getElementById('navUser');
+      if (HN.isAuthenticated()) {
+        const user = HN.getCurrentUser();
+        const credits = user.credits || 0;
+        navUser.innerHTML = `
+          <div class="user-credits">⭐ ${credits} Credits</div>
+          <a href="/profile.html" class="btn btn-small">Profile</a>
+          <button class="btn btn-small btn-danger" onclick="HN.logout()">Logout</button>
+        `;
+      }
+    }
+
+    // Load stats (mock data for now)
+    function loadStats() {
+      document.getElementById('totalUsers').textContent = '1,234';
+      document.getElementById('totalPosts').textContent = '5,678';
+      document.getElementById('totalComments').textContent = '12,345';
+      document.getElementById('totalLikes').textContent = '45,678';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      loadStats();
+    });
+  </script>
+</body>
+</html>

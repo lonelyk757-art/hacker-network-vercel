@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed - Hacker Network</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .feed-container {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--spacing-xl);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feed-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .feed-header h1 {
+      margin: 0;
+    }
+
+    .create-post-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .filter-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .filter-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary-cyan);
+      margin-bottom: var(--spacing-md);
+      font-family: var(--font-mono);
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+    }
+
+    .filter-btn {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary-neon);
+      color: var(--primary-neon);
+    }
+
+    .filter-btn.active {
+      background: var(--primary-neon);
+      color: var(--darker-bg);
+      border-color: var(--primary-neon);
+    }
+
+    .post-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .post-item:hover {
+      border-color: var(--primary-neon);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .post-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: var(--darker-bg);
+    }
+
+    .post-content {
+      padding: var(--spacing-lg);
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .post-title {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--primary-neon);
+    }
+
+    .post-badge {
+      display: inline-block;
+    }
+
+    .post-meta {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .post-author-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--darker-bg);
+    }
+
+    .post-excerpt {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.6;
+    }
+
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: var(--spacing-md);
+    }
+
+    .post-stats {
+      display: flex;
+      gap: var(--spacing-lg);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .post-stat {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .sidebar-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .sidebar-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary-cyan);
+      margin-bottom: var(--spacing-md);
+      font-family: var(--font-mono);
+    }
+
+    .trending-item {
+      padding: var(--spacing-md) 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .trending-item:last-child {
+      border-bottom: none;
+    }
+
+    .trending-tag {
+      color: var(--primary-neon);
+      font-weight: 700;
+      display: block;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .trending-count {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--text-secondary);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(0, 255, 65, 0.3);
+      border-top: 3px solid var(--primary-neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: var(--spacing-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .empty-state h3 {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    @media (max-width: 768px) {
+      .feed-container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .filter-buttons {
+        justify-content: space-between;
+      }
+
+      .filter-btn {
+        flex: 1;
+        min-width: calc(50% - var(--spacing-sm));
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/feed.html">Feed</a></li>
+        <li><a href="/about.html">About</a></li>
+      </ul>
+      <div class="nav-user" id="navUser">
+        <a href="/login.html" class="btn btn-small">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Feed Container -->
+  <div class="feed-container">
+    <!-- Main Feed -->
+    <div class="feed-main">
+      <div class="feed-header">
+        <h1>Network Feed</h1>
+        <a href="/create-post.html" class="btn create-post-btn" id="createPostBtn" style="display: none;">
+          ➕ Create Post
+        </a>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-section">
+        <div class="filter-title">Filter by Type</div>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All Posts</button>
+          <button class="filter-btn" data-filter="news">📰 News</button>
+          <button class="filter-btn" data-filter="blog">📝 Blog</button>
+          <button class="filter-btn" data-filter="image">🖼️ Images</button>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Filter by Topic</div>
+        <div class="filter-buttons">
+          <button class="filter-btn" data-topic="cybersecurity">Cybersecurity</button>
+          <button class="filter-btn" data-topic="exploit">Exploit</button>
+          <button class="filter-btn" data-topic="tools">Tools</button>
+          <button class="filter-btn" data-topic="ctf">CTF</button>
+          <button class="filter-btn" data-topic="privacy">Privacy</button>
+        </div>
+      </div>
+
+      <!-- Posts Container -->
+      <div id="postsContainer">
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Loading posts...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- User Card -->
+      <div class="sidebar-card" id="userCard" style="display: none;">
+        <div class="sidebar-title">Your Profile</div>
+        <div style="text-align: center; margin-bottom: var(--spacing-md);">
+          <div style="font-size: 2rem; margin-bottom: var(--spacing-sm);">👤</div>
+          <div id="userUsername" style="font-weight: 700; color: var(--primary-neon); margin-bottom: var(--spacing-xs);"></div>
+          <div id="userCredits" style="color: var(--secondary-cyan); font-size: 0.9rem;"></div>
+        </div>
+        <a href="/profile.html" class="btn btn-small" style="width: 100%; text-align: center;">View Profile</a>
+      </div>
+
+      <!-- Trending Tags -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Trending Topics</div>
+        <div id="trendingContainer">
+          <div class="trending-item">
+            <span class="trending-tag">#cybersecurity</span>
+            <span class="trending-count">234 posts</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">#exploit</span>
+            <span class="trending-count">189 posts</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">#tools</span>
+            <span class="trending-count">156 posts</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">#ctf</span>
+            <span class="trending-count">142 posts</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">#privacy</span>
+            <span class="trending-count">98 posts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Network Stats</div>
+        <div id="statsContainer">
+          <div class="trending-item">
+            <span class="trending-tag">Active Users</span>
+            <span class="trending-count" id="statUsers">0</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">Total Posts</span>
+            <span class="trending-count" id="statPosts">0</span>
+          </div>
+          <div class="trending-item">
+            <span class="trending-tag">Total Likes</span>
+            <span class="trending-count" id="statLikes">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    let currentFilter = 'all';
+    let currentTopic = null;
+
+    // Update navigation
+    function updateNavigation() {
+      const navUser = document.getElementById('navUser');
+      const userCard = document.getElementById('userCard');
+      const createPostBtn = document.getElementById('createPostBtn');
+
+      if (HN.isAuthenticated()) {
+        const user = HN.getCurrentUser();
+        const credits = user.credits || 0;
+        
+        navUser.innerHTML = `
+          <div class="user-credits">⭐ ${credits} Credits</div>
+          <a href="/profile.html" class="btn btn-small">Profile</a>
+          <button class="btn btn-small btn-danger" onclick="HN.logout()">Logout</button>
+        `;
+
+        userCard.style.display = 'block';
+        document.getElementById('userUsername').textContent = user.username || user.email;
+        document.getElementById('userCredits').textContent = `${credits} Credits`;
+
+        createPostBtn.style.display = 'inline-flex';
+      } else {
+        userCard.style.display = 'none';
+        createPostBtn.style.display = 'none';
+      }
+    }
+
+    // Load posts
+    async function loadPosts() {
+      const container = document.getElementById('postsContainer');
+      
+      try {
+        const filters = {
+          type: currentFilter === 'all' ? null : currentFilter,
+          tag: currentTopic,
+        };
+
+        const posts = await HN.getPosts(filters);
+
+        if (posts.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <h3>No posts found</h3>
+              <p>Be the first to share something with the network!</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = posts.map(post => `
+          <div class="post-item" onclick="window.location.href = '/post.html?id=${post.id}'">
+            ${post.image_url ? `<img src="${post.image_url}" alt="${post.title}" class="post-image">` : ''}
+            <div class="post-content">
+              <div class="post-header">
+                <h3 class="post-title">${HN.sanitizeHtml(post.title)}</h3>
+                <span class="post-badge badge badge-${post.type}">${post.type.toUpperCase()}</span>
+              </div>
+              
+              <div class="post-meta">
+                <div class="post-author">
+                  <div class="post-author-avatar">${post.users?.username?.[0]?.toUpperCase() || '?'}</div>
+                  <span>${post.users?.username || 'Anonymous'}</span>
+                </div>
+                <span>${HN.formatDate(post.created_at)}</span>
+              </div>
+
+              <p class="post-excerpt">${HN.truncateText(post.content, 150)}</p>
+
+              <div class="post-tags">
+                ${(post.tags || '').split(',').filter(t => t).map(tag => 
+                  `<span class="tag">${HN.sanitizeHtml(tag.trim())}</span>`
+                ).join('')}
+              </div>
+
+              <div class="post-footer">
+                <div class="post-stats">
+                  <div class="post-stat">❤️ ${post.likes || 0}</div>
+                  <div class="post-stat">💬 ${post.comments?.length || 0}</div>
+                </div>
+                <a href="/post.html?id=${post.id}" class="btn btn-small">Read More</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <h3>Error loading posts</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Filter handlers
+    document.querySelectorAll('[data-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        loadPosts();
+      });
+    });
+
+    document.querySelectorAll('[data-topic]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-topic]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentTopic = btn.dataset.topic;
+        loadPosts();
+      });
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      loadPosts();
+    });
+  </script>
+</body>
+</html>

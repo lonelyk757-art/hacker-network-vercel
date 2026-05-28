@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Hacker Network</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .profile-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .profile-header {
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), rgba(0, 217, 255, 0.05));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-xl);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--spacing-xl);
+      align-items: center;
+    }
+
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-neon), var(--secondary-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--darker-bg);
+      border: 3px solid var(--primary-neon);
+    }
+
+    .profile-info h1 {
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .profile-email {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .profile-joined {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-md);
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: var(--spacing-lg);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
+      color: var(--primary-neon);
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: var(--spacing-md);
+    }
+
+    .posts-section {
+      margin-top: var(--spacing-xl);
+    }
+
+    .section-title {
+      margin-bottom: var(--spacing-lg);
+      color: var(--secondary-cyan);
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .post-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .post-card:hover {
+      border-color: var(--primary-neon);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .post-card-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: var(--darker-bg);
+    }
+
+    .post-card-content {
+      padding: var(--spacing-lg);
+    }
+
+    .post-card-title {
+      margin: 0 0 var(--spacing-sm) 0;
+      font-size: 1rem;
+      color: var(--primary-neon);
+    }
+
+    .post-card-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .post-card-excerpt {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.4;
+    }
+
+    .post-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: var(--spacing-md);
+    }
+
+    .post-card-badge {
+      font-size: 0.75rem;
+    }
+
+    .post-card-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .post-card-actions button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+    }
+
+    .post-card-actions button:hover {
+      color: var(--primary-neon);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty-icon {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .loading {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--primary-neon);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 255, 65, 0.3);
+      border-top: 3px solid var(--primary-neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: var(--spacing-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 768px) {
+      .profile-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .profile-avatar {
+        margin: 0 auto;
+      }
+
+      .profile-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+      }
+
+      .posts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/feed.html">Feed</a></li>
+      </ul>
+      <div class="nav-user" id="navUser">
+        <a href="/login.html" class="btn btn-small">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Container -->
+  <div class="profile-container">
+    <div id="profileContent">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading profile...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    // Check authentication
+    if (!HN.isAuthenticated()) {
+      window.location.href = '/login.html';
+    }
+
+    // Update navigation
+    function updateNavigation() {
+      const navUser = document.getElementById('navUser');
+      const user = HN.getCurrentUser();
+      const credits = user.credits || 0;
+      navUser.innerHTML = `
+        <div class="user-credits">⭐ ${credits} Credits</div>
+        <a href="/feed.html" class="btn btn-small">Feed</a>
+        <button class="btn btn-small btn-danger" onclick="HN.logout()">Logout</button>
+      `;
+    }
+
+    // Load profile
+    async function loadProfile() {
+      try {
+        const user = HN.getCurrentUser();
+        const userInitial = user.username?.[0]?.toUpperCase() || '?';
+        const joinDate = new Date(user.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        // Load user posts
+        const posts = await HN.getPosts({ userId: user.id });
+
+        let html = `
+          <div class="profile-header">
+            <div class="profile-avatar">${userInitial}</div>
+            
+            <div class="profile-info">
+              <h1>${HN.sanitizeHtml(user.username || user.email)}</h1>
+              <div class="profile-email">${HN.sanitizeHtml(user.email)}</div>
+              <div class="profile-joined">Joined ${joinDate}</div>
+            </div>
+
+            <div class="profile-actions">
+              <a href="/create-post.html" class="btn">Create Post</a>
+              <button class="btn btn-secondary" onclick="HN.logout()">Logout</button>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-box">
+              <div class="stat-number">${user.credits || 0}</div>
+              <div class="stat-label">Credits</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">${posts.length}</div>
+              <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">${posts.reduce((sum, p) => sum + (p.likes || 0), 0)}</div>
+              <div class="stat-label">Total Likes</div>
+            </div>
+          </div>
+
+          <div class="posts-section">
+            <h2 class="section-title">Your Posts</h2>
+        `;
+
+        if (posts.length === 0) {
+          html += `
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <h3>No posts yet</h3>
+              <p>Start sharing your knowledge with the community</p>
+              <a href="/create-post.html" class="btn" style="margin-top: var(--spacing-lg);">Create Your First Post</a>
+            </div>
+          `;
+        } else {
+          html += `<div class="posts-grid">`;
+          
+          posts.forEach(post => {
+            html += `
+              <div class="post-card" onclick="window.location.href = '/post.html?id=${post.id}'">
+                ${post.image_url ? `<img src="${post.image_url}" alt="${HN.sanitizeHtml(post.title)}" class="post-card-image">` : ''}
+                <div class="post-card-content">
+                  <h3 class="post-card-title">${HN.sanitizeHtml(post.title)}</h3>
+                  <div class="post-card-meta">${HN.formatDate(post.created_at)}</div>
+                  <p class="post-card-excerpt">${HN.truncateText(post.content, 100)}</p>
+                  
+                  <div class="post-card-footer">
+                    <span class="post-card-badge badge badge-${post.type}">${post.type.toUpperCase()}</span>
+                    <div class="post-card-actions">
+                      <button onclick="event.stopPropagation(); viewPost(${post.id})" title="View">👁️</button>
+                      <button onclick="event.stopPropagation(); editPost(${post.id})" title="Edit">✏️</button>
+                      <button onclick="event.stopPropagation(); deletePost(${post.id})" title="Delete">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          html += `</div>`;
+        }
+
+        html += `</div>`;
+
+        document.getElementById('profileContent').innerHTML = html;
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.getElementById('profileContent').innerHTML = `
+          <div class="empty-state">
+            <h3>Error loading profile</h3>
+            <p>${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function viewPost(postId) {
+      window.location.href = `/post.html?id=${postId}`;
+    }
+
+    function editPost(postId) {
+      HN.showNotification('Edit feature coming soon', 'info');
+    }
+
+    async function deletePost(postId) {
+      if (!confirm('Delete this post? This action cannot be undone.')) return;
+
+      try {
+        await HN.deletePost(postId);
+        HN.showNotification('Post deleted', 'success');
+        loadProfile();
+      } catch (error) {
+        HN.showNotification(error.message, 'error');
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      loadProfile();
+    });
+  </script>
+</body>
+</html>

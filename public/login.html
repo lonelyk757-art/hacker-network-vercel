@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Hacker Network</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: var(--spacing-lg);
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, rgba(0, 217, 255, 0.05) 100%);
+    }
+
+    .auth-box {
+      background: var(--card-bg);
+      border: 2px solid var(--primary-neon);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-2xl);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 40px rgba(0, 255, 65, 0.2);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .auth-box h1 {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      font-size: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-xl);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: var(--spacing-md);
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .auth-tab.active {
+      color: var(--primary-neon);
+      border-bottom-color: var(--primary-neon);
+    }
+
+    .auth-tab:hover {
+      color: var(--secondary-cyan);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .form-error {
+      background: rgba(255, 0, 85, 0.1);
+      border: 1px solid var(--accent-red);
+      color: var(--accent-red);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-lg);
+      display: none;
+    }
+
+    .form-error.show {
+      display: block;
+    }
+
+    .form-success {
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid var(--primary-neon);
+      color: var(--primary-neon);
+      padding: var(--spacing-md);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-lg);
+      display: none;
+    }
+
+    .form-success.show {
+      display: block;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: var(--spacing-lg);
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--spacing-lg);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .auth-footer a {
+      color: var(--secondary-cyan);
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: var(--primary-neon);
+      font-family: var(--font-mono);
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(0, 255, 65, 0.3);
+      border-top: 2px solid var(--primary-neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: var(--spacing-sm);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: var(--spacing-lg);
+      color: var(--secondary-cyan);
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: var(--primary-neon);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="nav-logo">⚡ HACKER NETWORK</div>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/feed.html">Feed</a></li>
+      </ul>
+      <div class="nav-user">
+        <a href="/" class="btn btn-small">Back</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Auth Container -->
+  <div class="auth-container">
+    <div class="auth-box">
+      <a href="/" class="back-link">← Back to Home</a>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Login</button>
+        <button class="auth-tab" data-tab="register">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form class="auth-form active" id="loginForm" data-tab="login">
+        <h1>Access Network</h1>
+        <div class="form-error" id="loginError"></div>
+        <div class="form-success" id="loginSuccess"></div>
+
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" name="email" required placeholder="hacker@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" required placeholder="••••••••">
+        </div>
+
+        <div class="loading" id="loginLoading">
+          <div class="spinner"></div>
+          <span>Authenticating...</span>
+        </div>
+
+        <button type="submit" class="btn btn-submit" id="loginSubmit">Enter Network</button>
+      </form>
+
+      <!-- Register Form -->
+      <form class="auth-form" id="registerForm" data-tab="register">
+        <h1>Join Network</h1>
+        <div class="form-error" id="registerError"></div>
+        <div class="form-success" id="registerSuccess"></div>
+
+        <div class="form-group">
+          <label for="registerUsername">Username</label>
+          <input type="text" id="registerUsername" name="username" required placeholder="your_handle">
+        </div>
+
+        <div class="form-group">
+          <label for="registerEmail">Email Address</label>
+          <input type="email" id="registerEmail" name="email" required placeholder="hacker@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" name="password" required placeholder="••••••••">
+        </div>
+
+        <div class="form-group">
+          <label for="registerConfirm">Confirm Password</label>
+          <input type="password" id="registerConfirm" name="confirm" required placeholder="••••••••">
+        </div>
+
+        <div class="loading" id="registerLoading">
+          <div class="spinner"></div>
+          <span>Creating account...</span>
+        </div>
+
+        <button type="submit" class="btn btn-submit" id="registerSubmit">Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        <p>By continuing, you agree to our <a href="/terms.html">Terms of Service</a> and <a href="/privacy.html">Privacy Policy</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+        
+        tab.classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}Form`).classList.add('active');
+      });
+    });
+
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      const loadingEl = document.getElementById('loginLoading');
+      const submitBtn = document.getElementById('loginSubmit');
+
+      errorEl.classList.remove('show');
+      loadingEl.classList.add('show');
+      submitBtn.disabled = true;
+
+      try {
+        await HN.login(email, password);
+        HN.showNotification('Login successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = '/feed.html';
+        }, 1000);
+      } catch (error) {
+        errorEl.textContent = error.message || 'Login failed. Please try again.';
+        errorEl.classList.add('show');
+        loadingEl.classList.remove('show');
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Register form handler
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('registerUsername').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const confirm = document.getElementById('registerConfirm').value;
+      const errorEl = document.getElementById('registerError');
+      const loadingEl = document.getElementById('registerLoading');
+      const submitBtn = document.getElementById('registerSubmit');
+
+      // Validation
+      if (password !== confirm) {
+        errorEl.textContent = 'Passwords do not match.';
+        errorEl.classList.add('show');
+        return;
+      }
+
+      if (password.length < 8) {
+        errorEl.textContent = 'Password must be at least 8 characters.';
+        errorEl.classList.add('show');
+        return;
+      }
+
+      errorEl.classList.remove('show');
+      loadingEl.classList.add('show');
+      submitBtn.disabled = true;
+
+      try {
+        await HN.register(email, password, username);
+        HN.showNotification('Account created! Welcome to the network.', 'success');
+        setTimeout(() => {
+          window.location.href = '/feed.html';
+        }, 1000);
+      } catch (error) {
+        errorEl.textContent = error.message || 'Registration failed. Please try again.';
+        errorEl.classList.add('show');
+        loadingEl.classList.remove('show');
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Redirect if already logged in
+    if (HN.isAuthenticated()) {
+      window.location.href = '/feed.html';
+    }
+  </script>
+</body>
+</html>
